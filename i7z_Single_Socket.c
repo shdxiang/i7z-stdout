@@ -19,7 +19,6 @@
 #include <time.h>
 #include <math.h>
 #include <assert.h>
-#include <ncurses.h>
 #include "i7z.h"
 
 #define U_L_I unsigned long int
@@ -84,10 +83,7 @@ int Single_Socket ()
                                     * the number of colums of the screen *
                                     * for NCURSES                        */
         //Setup stuff for ncurses
-        initscr ();			/* start the curses mode */
-        start_color ();
         //getmaxyx (stdscr, row, col);	/* get the number of rows and columns */
-        refresh ();
         //Setup for ncurses completed
     }
     print_i7z_single();
@@ -106,15 +102,14 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
 	double TRUE_CPU_FREQ;
 
     //Print a slew of information on the ncurses window
-    mvprintw (0, 0, "Cpu speed from cpuinfo %0.2fMhz\n", cpu_freq_cpuinfo);
-    mvprintw (1, 0,
-              "cpuinfo might be wrong if cpufreq is enabled. To guess correctly try estimating via tsc\n");
-    mvprintw (2, 0, "Linux's inbuilt cpu_khz code emulated now\n\n");
+    printf ("Cpu speed from cpuinfo %0.2fMhz\n", cpu_freq_cpuinfo);
+    printf ("cpuinfo might be wrong if cpufreq is enabled. To guess correctly try estimating via tsc\n");
+    printf ("Linux's inbuilt cpu_khz code emulated now\n\n");
 
 
     //estimate the freq using the estimate_MHz() code that is almost mhz accurate
     cpu_freq_cpuinfo = estimate_MHz ();
-    mvprintw (3, 0, "True Frequency (without accounting Turbo) %0.0f MHz\n",
+    printf ("True Frequency (without accounting Turbo) %0.0f MHz\n",
               cpu_freq_cpuinfo);
 
     int i, ii;
@@ -242,7 +237,7 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
         SET_IF_TRUE(error_indx,online_cpus[0],-1);
         RETURN_IF_TRUE(online_cpus[0]==-1);
 
-        mvprintw (4 + printw_offset, 0,"  CPU Multiplier %dx || Bus clock frequency (BCLK) %0.2f MHz \n",	CPU_Multiplier, BLCK);
+        printf ("  CPU Multiplier %dx || Bus clock frequency (BCLK) %0.2f MHz \n",	CPU_Multiplier, BLCK);
 
         if (numCPUs <= 0) {
             sprintf (string_ptr1, "  Max TURBO Multiplier (if Enabled) with 0 cores is");
@@ -267,29 +262,29 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
         numLogicalCores = core_list_size_log;
 
         //if (socket_0.socket_num == 0) {
-            mvprintw (19, 0, "C0 = Processor running without halting ");
-            mvprintw (20, 0, "C1 = Processor running with halts (States >C0 are power saver modes with cores idling)");
-            mvprintw (21, 0, "C3 = Cores running with PLL turned off and core cache turned off");
-            mvprintw (22, 0, "C6, C7 = Everything in C3 + core state saved to last level cache, C7 is deeper than C6");
-            mvprintw (23, 0, "  Above values in table are in percentage over the last 1 sec");
-//            mvprintw (24, 0, "Total Logical Cores: [%d], Total Physical Cores: [%d] \n",	numLogicalCores, numPhysicalCores);
-            mvprintw (24, 0, "[core-id] refers to core-id number in /proc/cpuinfo");
-            mvprintw (25, 0, "'Garbage Values' message printed when garbage values are read");
-            mvprintw (26, 0, "  Ctrl+C to exit");
+            printf ("C0 = Processor running without halting ");
+            printf ("C1 = Processor running with halts (States >C0 are power saver modes with cores idling)");
+            printf ("C3 = Cores running with PLL turned off and core cache turned off");
+            printf ("C6, C7 = Everything in C3 + core state saved to last level cache, C7 is deeper than C6");
+            printf ("  Above values in table are in percentage over the last 1 sec");
+//            printf ("Total Logical Cores: [%d], Total Physical Cores: [%d] \n",	numLogicalCores, numPhysicalCores);
+            printf ("[core-id] refers to core-id number in /proc/cpuinfo");
+            printf ("'Garbage Values' message printed when garbage values are read");
+            printf ("  Ctrl+C to exit");
         //}
 
-        mvprintw (6 + printw_offset, 0, "Socket [%d] - [physical cores=%d, logical cores=%d, max online cores ever=%d] \n", socket_0.socket_num, numPhysicalCores, numLogicalCores,*max_observed_cpu);
+        printf ("Socket [%d] - [physical cores=%d, logical cores=%d, max online cores ever=%d] \n", socket_0.socket_num, numPhysicalCores, numLogicalCores,*max_observed_cpu);
 
-        mvprintw (9 + printw_offset, 0, "%s %s\n", string_ptr1, string_ptr2);
+        printf ("%s %s\n", string_ptr1, string_ptr2);
 
         if (TURBO_MODE == 1) {
-            mvprintw (7 + printw_offset, 0, "  TURBO ENABLED on %d Cores, %s\n", numPhysicalCores, HT_ON_str);
+            printf ("  TURBO ENABLED on %d Cores, %s\n", numPhysicalCores, HT_ON_str);
             TRUE_CPU_FREQ = BLCK * ((double) CPU_Multiplier + 1);
-            mvprintw (8 + printw_offset, 0, "  Max Frequency without considering Turbo %0.2f MHz (%0.2f x [%d]) \n", TRUE_CPU_FREQ, BLCK, CPU_Multiplier + 1);
+            printf ("  Max Frequency without considering Turbo %0.2f MHz (%0.2f x [%d]) \n", TRUE_CPU_FREQ, BLCK, CPU_Multiplier + 1);
         } else {
-            mvprintw (7 + printw_offset, 0, "  TURBO DISABLED on %d Cores, %s\n", numPhysicalCores, HT_ON_str);
+            printf ("  TURBO DISABLED on %d Cores, %s\n", numPhysicalCores, HT_ON_str);
             TRUE_CPU_FREQ = BLCK * ((double) CPU_Multiplier);
-            mvprintw (8 + printw_offset, 0,"  Max Frequency without considering Turbo %0.2f MHz (%0.2f x [%d]) \n", TRUE_CPU_FREQ, BLCK, CPU_Multiplier);
+            printf ("  Max Frequency without considering Turbo %0.2f MHz (%0.2f x [%d]) \n", TRUE_CPU_FREQ, BLCK, CPU_Multiplier);
         }
 
         //Primarily for 32-bit users, found that after sometimes the counters loopback, so inorder
@@ -353,9 +348,9 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
         (*kk_1)++;
         nanosleep (&one_second_sleep, NULL);
 	if(prog_options.i7_version.sandy_bridge || prog_options.i7_version.ivy_bridge || prog_options.i7_version.haswell){
-            mvprintw (11 + printw_offset, 0, "\tCore [core-id]  :Actual Freq (Mult.)\t  C0%%   Halt(C1)%%  C3 %%   C6 %%   C7 %%  Temp      VCore\n");
+            printf ("\tCore [core-id]  :Actual Freq (Mult.)\t  C0%%   Halt(C1)%%  C3 %%   C6 %%   C7 %%  Temp      VCore\n");
 	}else{
-            mvprintw (11 + printw_offset, 0, "\tCore [core-id]  :Actual Freq (Mult.)\t  C0%%   Halt(C1)%%  C3 %%   C6 %%  Temp      VCore\n");
+            printf ("\tCore [core-id]  :Actual Freq (Mult.)\t  C0%%   Halt(C1)%%  C3 %%   C6 %%  Temp      VCore\n");
 	}
         //estimate the CPU speed
         estimated_mhz = estimate_MHz ();
@@ -532,13 +527,13 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
                     }
 	        }
 	        if (print_core[ii])
-                    mvprintw (12 + ii + printw_offset, 0, "\tCore %d [%d]:\t  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%d\t%0.4f\n",
+                    printf ("\tCore %d [%d]:\t  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%d\t%0.4f\n",
                           ii + 1, core_list[ii], _FREQ[i], _MULT[i], THRESHOLD_BETWEEN_0_100(C0_time[i] * 100),
                           THRESHOLD_BETWEEN_0_100(c1_time), THRESHOLD_BETWEEN_0_100(C3_time[i] * 100), THRESHOLD_BETWEEN_0_100(C6_time[i] * 100),THRESHOLD_BETWEEN_0_100(C7_time[i] * 100),
 			  Read_Thermal_Status_CPU(core_list[ii]),	//C0_time[i]*100+C1_time[i]*100 around 100
                           Read_Voltage_CPU(core_list[ii]));
 	        else
-                    mvprintw (12 + ii + printw_offset, 0, "\tCore %d [%d]:\t  Garbage Values\n", ii + 1, core_list[ii]);
+                    printf ("\tCore %d [%d]:\t  Garbage Values\n", ii + 1, core_list[ii]);
 	    }else{
 	        //there is a bit of leeway to be had as the total counts might deviate
 	        //if this happens c1_time might be negative so just adjust so that it is thresholded to 0
@@ -549,12 +544,12 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
                     }
 	        }
 	        if (print_core[ii])
-                    mvprintw (12 + ii + printw_offset, 0, "\tCore %d [%d]:\t  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%d\t%0.4f\n",
+                    printf ("\tCore %d [%d]:\t  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%d\t%0.4f\n",
                           ii + 1, core_list[ii], _FREQ[i], _MULT[i], THRESHOLD_BETWEEN_0_100(C0_time[i] * 100),
                           THRESHOLD_BETWEEN_0_100(c1_time), THRESHOLD_BETWEEN_0_100(C3_time[i] * 100), THRESHOLD_BETWEEN_0_100(C6_time[i] * 100),Read_Thermal_Status_CPU(core_list[ii]),	//C0_time[i]*100+C1_time[i]*100 around 100
                           Read_Voltage_CPU(core_list[ii]));
 	        else
-                    mvprintw (12 + ii + printw_offset, 0, "\tCore %d [%d]:\t  Garbage Values\n", ii + 1, core_list[ii]);
+                    printf ("\tCore %d [%d]:\t  Garbage Values\n", ii + 1, core_list[ii]);
 	    }
         }
 
@@ -564,7 +559,7 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
               	if (in_core_list(ii,core_list)){
               		continue;
               	}else{
-              		mvprintw (12 + k + numCPUs + printw_offset, 0, "\tProcessor %d [%d]:  OFFLINE\n", k + numCPUs + 1, ii);
+              		printf ("\tProcessor %d [%d]:  OFFLINE\n", k + numCPUs + 1, ii);
               	}
               	k++;
         }*/
@@ -575,7 +570,7 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
 
         //for(ii=*max_observed_cpu; ii<6; ii++)
         for (ii = numCPUs; ii<6; ii++)
-            mvprintw (12 + ii + printw_offset, 0, "\n");
+            printf ("\n");
 
         TRUE_CPU_FREQ = 0;
 
@@ -612,8 +607,7 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
 		//        logCpuCstates_single_c("\n");
         logCloseFile_single();
 
-        mvprintw (10 + printw_offset, 0,
-                  "  Real Current Frequency %0.2f MHz [%0.2f x %0.2f] (Max of below)\n", TRUE_CPU_FREQ, BLCK, TRUE_CPU_FREQ/BLCK);
+        printf ("  Real Current Frequency %0.2f MHz [%0.2f x %0.2f] (Max of below)\n", TRUE_CPU_FREQ, BLCK, TRUE_CPU_FREQ/BLCK);
 
         refresh ();
 
@@ -636,7 +630,7 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
         //WELL for single socket machine this code will never be executed. lol
         //atleast 1 core will be online so ...
         //for (ii = 0 ; ii<14; ii++)
-        //    mvprintw (3 + ii + printw_offset, 0, "Ending up here\n");
+        //    printf ("Ending up here\n");
         //print_socket_information(&socket_0);
     }
 
@@ -675,12 +669,12 @@ void print_i7z_single ()
 
     //Print a slew of information on the ncurses window
     //I already print that in the loop so..
-    mvprintw (0, 0, "WAIT .... ");
+    printf ("WAIT .... ");
 
 
     //estimate the freq using the estimate_MHz() code that is almost mhz accurate
     cpu_freq_cpuinfo = estimate_MHz ();
-    mvprintw (3, 0, "True Frequency (without accounting Turbo) %0.0f MHz\n",
+    printf ("True Frequency (without accounting Turbo) %0.0f MHz\n",
               cpu_freq_cpuinfo);
 
 
@@ -872,15 +866,14 @@ void print_i7z_single ()
 	  //Setup for ncurses completed
 
 	  //Print a slew of information on the ncurses window
-	  mvprintw (0, 0, "Cpu speed from cpuinfo %0.2fMhz\n", cpu_freq_cpuinfo);
-	  mvprintw (1, 0,
-			"cpuinfo might be wrong if cpufreq is enabled. To guess correctly try estimating via tsc\n");
-	  mvprintw (2, 0, "Linux's inbuilt cpu_khz code emulated now\n\n");
+	  printf ("Cpu speed from cpuinfo %0.2fMhz\n", cpu_freq_cpuinfo);
+	  printf ("cpuinfo might be wrong if cpufreq is enabled. To guess correctly try estimating via tsc\n");
+	  printf ("Linux's inbuilt cpu_khz code emulated now\n\n");
 
 
 	  //estimate the freq using the estimate_MHz() code that is almost mhz accurate
 	  cpu_freq_cpuinfo = estimate_MHz ();
-	  mvprintw (3, 0, "True Frequency (without accounting Turbo) %0.0f MHz\n",
+	  printf ("True Frequency (without accounting Turbo) %0.0f MHz\n",
 			cpu_freq_cpuinfo);
 
 
@@ -901,8 +894,7 @@ void print_i7z_single ()
 
 	  //Blck is basically the true speed divided by the multiplier
 	  BLCK = cpu_freq_cpuinfo / CPU_Multiplier;
-	  mvprintw (4, 0,
-			"CPU Multiplier %dx || Bus clock frequency (BCLK) %0.2f MHz \n",
+	  printf ("CPU Multiplier %dx || Bus clock frequency (BCLK) %0.2f MHz \n",
 			CPU_Multiplier, BLCK);
 
 	  //Get turbo mode status by reading msr within turbo_status
@@ -940,43 +932,38 @@ void print_i7z_single ()
 
 	  if (TURBO_MODE == 1)
 		{				// && (CPU_Multiplier+1)==MAX_TURBO_2C){
-		  mvprintw (5, 0, "TURBO ENABLED on %d Cores, %s\n", numPhysicalCores,
+		  printf ("TURBO ENABLED on %d Cores, %s\n", numPhysicalCores,
 			HT_ON_str);
 		  TRUE_CPU_FREQ = BLCK * ((double) CPU_Multiplier + 1);
-		  mvprintw (6, 0, "True Frequency %0.2f MHz (%0.2f x [%d]) \n",
+		  printf ("True Frequency %0.2f MHz (%0.2f x [%d]) \n",
 			TRUE_CPU_FREQ, BLCK, CPU_Multiplier + 1);
 		}
 	  else
 		{
-		  mvprintw (5, 0, "TURBO DISABLED on %d Cores, %s\n",
+		  printf ("TURBO DISABLED on %d Cores, %s\n",
 			numPhysicalCores, HT_ON_str);
 		  TRUE_CPU_FREQ = BLCK * ((double) CPU_Multiplier);
-		  mvprintw (6, 0, "True Frequency %0.2f MHz (%0.2f x [%d]) \n",
+		  printf ("True Frequency %0.2f MHz (%0.2f x [%d]) \n",
 			TRUE_CPU_FREQ, BLCK, CPU_Multiplier);
 		}
 
 
 	  if (numCPUs >= 2)
-		 {mvprintw (7, 0,"  Max TURBO (if Enabled) with 1/2 Core  active %dx / %dx\n", MAX_TURBO_1C, MAX_TURBO_2C);}
+		 {printf ("  Max TURBO (if Enabled) with 1/2 Core  active %dx / %dx\n", MAX_TURBO_1C, MAX_TURBO_2C);}
 	  if (numCPUs >= 4)
-		 {mvprintw (8, 0,"  Max TURBO (if Enabled) with 3/4 Cores active %dx / %dx\n", MAX_TURBO_3C, MAX_TURBO_4C);}
+		 {printf ("  Max TURBO (if Enabled) with 3/4 Cores active %dx / %dx\n", MAX_TURBO_3C, MAX_TURBO_4C);}
 	  if (numCPUs >= 6)
-		 {mvprintw (9, 0,"  Max TURBO (if Enabled) with 5/6 Cores active %dx / %dx\n", MAX_TURBO_5C, MAX_TURBO_6C);}
+		 {printf ("  Max TURBO (if Enabled) with 5/6 Cores active %dx / %dx\n", MAX_TURBO_5C, MAX_TURBO_6C);}
 
-	  mvprintw (22, 0, "C0 = Processor running without halting");
-	  mvprintw (23, 0,
-			"C1 = Processor running with halts (States >C0 are power saver)");
-	  mvprintw (24, 0,
-			"C3 = Cores running with PLL turned off and core cache turned off");
-	  mvprintw (25, 0,
-			"C6 = Everything in C3 + core state saved to last level cache");
-	  mvprintw (26, 0,
-			"  Above values in table are in percentage over the last 1 sec");
-	  mvprintw (27, 0,
-			" Total Logical Cores: [%d], Total Physical Cores: [%d] \n",
+	  printf ("C0 = Processor running without halting");
+	  printf ("C1 = Processor running with halts (States >C0 are power saver)");
+	  printf ("C3 = Cores running with PLL turned off and core cache turned off");
+	  printf ("C6 = Everything in C3 + core state saved to last level cache");
+	  printf ("  Above values in table are in percentage over the last 1 sec");
+	  printf (" Total Logical Cores: [%d], Total Physical Cores: [%d] \n",
 			numLogicalCores, numPhysicalCores);
 
-	  mvprintw (29, 0, "  Ctrl+C to exit");
+	  printf ("  Ctrl+C to exit");
 
 
 	  int IA32_PERF_GLOBAL_CTRL = 911;	//38F
@@ -1016,7 +1003,7 @@ void print_i7z_single ()
 	  SET_IF_TRUE(error_indx,online_cpus[0],-1);
 	  unsigned long int IA32_APERF = get_msr_value (CPU_NUM, 232, 7, 0, &error_indx);
 	  SET_IF_TRUE(error_indx,online_cpus[0],-1);
-	  mvprintw (11, 0, "Wait...\n");
+	  printf ("Wait...\n");
 	  refresh ();
 	  nanosleep (&one_second_sleep, NULL);
 	  IA32_MPERF = get_msr_value (CPU_NUM, 231, 7, 0, &error_indx) - IA32_MPERF;
@@ -1031,7 +1018,7 @@ void print_i7z_single ()
 	  double _FREQ[numCPUs], _MULT[numCPUs];
 	  refresh ();
 
-	  mvprintw (11, 0, "Current Freqs\n");
+	  printf ("Current Freqs\n");
 
 	  int kk=11, ii;
 
@@ -1086,8 +1073,7 @@ void print_i7z_single ()
 			  }
 			  kk++;
 		  nanosleep (&one_second_sleep, NULL);
-		  mvprintw (13, 0,
-			"\tProcessor  :Actual Freq (Mult.)  C0%%   Halt(C1)%%  C3 %%   C6 %%\n");
+		  printf ("\tProcessor  :Actual Freq (Mult.)  C0%%   Halt(C1)%%  C3 %%   C6 %%\n");
 
 		  estimated_mhz = estimate_MHz ();
 		  for (i = 0; i < numCPUs; i++)
@@ -1187,9 +1173,9 @@ void print_i7z_single ()
 
 		  for (i = 0; i < numCPUs; i++){
 			if(online_cpus[i]==-1){
-				mvprintw (14 + i, 0, "\tProcessor %d:  OFFLINE\n",i + 1);
+				printf ("\tProcessor %d:  OFFLINE\n",i + 1);
 			}else{
-				mvprintw (14 + i, 0, "\tProcessor %d:  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\n", i + 1, _FREQ[i], _MULT[i],
+				printf ("\tProcessor %d:  %0.2f (%.2fx)\t%4.3Lg\t%4.3Lg\t%4.3Lg\t%4.3Lg\n", i + 1, _FREQ[i], _MULT[i],
 				      C0_time[i] * 100 , C1_time[i]* 100  - (C3_time[i] + C6_time[i] )* 100, C3_time[i]* 100 , C6_time[i]* 100);	//C0_time[i]*100+C1_time[i]*100 around 100
 			}
 		  }
@@ -1201,9 +1187,7 @@ void print_i7z_single ()
 			  if (_FREQ[i] > TRUE_CPU_FREQ)
 			  {
 				  TRUE_CPU_FREQ = _FREQ[i];
-				  mvprintw (12, 0,
-					"True Frequency %0.2f MHz (Intel specifies largest of below to be running Freq)\n",
-					TRUE_CPU_FREQ);
+				  printf ("True Frequency %0.2f MHz (Intel specifies largest of below to be running Freq)\n", TRUE_CPU_FREQ);
 			  }
 		  }
 
