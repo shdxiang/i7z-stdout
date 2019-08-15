@@ -609,8 +609,6 @@ void print_i7z_socket(struct cpu_socket_info socket_0, int printw_offset, int PL
 
         printf ("  Real Current Frequency %0.2f MHz (Max of below)\n", TRUE_CPU_FREQ);
 
-        refresh ();
-
         //shift the new values to the old counter values
         //so that the next time we use those to find the difference
         memcpy (old_val_CORE, new_val_CORE,
@@ -725,8 +723,6 @@ void print_i7z ()
             strncpy (HT_ON_str, "Hyper Threading OFF\0", 30);
             HT_ON = 0;
         }
-
-        refresh ();
 
         SET_ONLINE_ARRAY_PLUS1(online_cpus)
 

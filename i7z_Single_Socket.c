@@ -609,8 +609,6 @@ void print_i7z_socket_single(struct cpu_socket_info socket_0, int printw_offset,
 
         printf ("  Real Current Frequency %0.2f MHz [%0.2f x %0.2f] (Max of below)\n", TRUE_CPU_FREQ, BLCK, TRUE_CPU_FREQ/BLCK);
 
-        refresh ();
-
         //shift the new values to the old counter values
         //so that the next time we use those to find the difference
         memcpy (old_val_CORE, new_val_CORE,
@@ -736,8 +734,6 @@ void print_i7z_single ()
             HT_ON = 0;
         }
 
-        refresh ();
-
         SET_ONLINE_ARRAY_PLUS1(online_cpus)
 
         //In the function calls below socket_num is set to the socket to print for
@@ -862,7 +858,6 @@ void print_i7z_single ()
 	  initscr ();			// start the curses mode
 	  start_color ();
 	  getmaxyx (stdscr, row, col);	// get the number of rows and columns
-	  refresh ();
 	  //Setup for ncurses completed
 
 	  //Print a slew of information on the ncurses window
@@ -1004,7 +999,6 @@ void print_i7z_single ()
 	  unsigned long int IA32_APERF = get_msr_value (CPU_NUM, 232, 7, 0, &error_indx);
 	  SET_IF_TRUE(error_indx,online_cpus[0],-1);
 	  printf ("Wait...\n");
-	  refresh ();
 	  nanosleep (&one_second_sleep, NULL);
 	  IA32_MPERF = get_msr_value (CPU_NUM, 231, 7, 0, &error_indx) - IA32_MPERF;
 	  SET_IF_TRUE(error_indx,online_cpus[0],-1);
@@ -1016,7 +1010,6 @@ void print_i7z_single ()
 	  long double C0_time[numCPUs], C1_time[numCPUs], C3_time[numCPUs],
 		C6_time[numCPUs];
 	  double _FREQ[numCPUs], _MULT[numCPUs];
-	  refresh ();
 
 	  printf ("Current Freqs\n");
 
@@ -1190,8 +1183,6 @@ void print_i7z_single ()
 				  printf ("True Frequency %0.2f MHz (Intel specifies largest of below to be running Freq)\n", TRUE_CPU_FREQ);
 			  }
 		  }
-
-		  refresh ();
 
 		  //shift the new values to the old counter values
 		  //so that the next time we use those to find the difference

@@ -19,7 +19,7 @@ endif
 
 CC       ?= gcc
 
-LIBS  += -lncurses -lpthread -lrt -lm
+LIBS  += -lpthread -lrt -lm
 INCLUDEFLAGS = 
 
 BIN	= i7z
